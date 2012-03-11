@@ -15,12 +15,14 @@
 
 #include "MessageProcessor.h"
 #include "Message.h"
+#include "Logger.h"
 
 class CommunicationServices{
 		public:
 			static CommunicationServices* getInstance();  
-			int initServer(MessageProcessor *mp_p, int protocolPort);	//init for server
-			void start();
+			int initServer(MessageProcessor *mp_p, int tpProtocol, 
+					unsigned short int port);	//init for server
+			int start();	//returns -1 when not started properly
 
 		private:
 			CommunicationServices();  // Private so that it can  not be called
@@ -28,9 +30,10 @@ class CommunicationServices{
 			CommunicationServices& operator=(CommunicationServices const&);  // assignment operator is private
 
 			static CommunicationServices* INSTANCE;
-			MessageProcessor *mp;
-			int mainSocket;
+			static Logger *logger;
 			
+			MessageProcessor *mp;
+			int mainSocket;			
 			
 			/**********************************************************************
 			Everything below is from: 
@@ -95,11 +98,12 @@ class CommunicationServices{
 
 				Function    : serverConnect
 				Description : connnect a server socket to listen for
-				Inputs      : none
+				Inputs      : port - port to bind
+								tpProtocol - transport layer protocol
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			static int serverConnect( void );
+			static int serverConnect( unsigned short int port, int tpProtocol );
 
 			/**********************************************************************
 
