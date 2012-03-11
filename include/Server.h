@@ -23,6 +23,7 @@ class Server {
 		Server(int protocolPort, MessageProcessor *mp, 
 			ThreadPoolWork *tpwork, int poolSize);
 		void start();
+		void cleanup();
 		
 	protected:
 		ThreadPoolManager *tpm;
