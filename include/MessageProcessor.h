@@ -16,13 +16,28 @@
 
 class MessageProcessor{
 	public:
-		/*
-		virtual MessageProcessor();  
-		virtual ~MessageProcessor(); 
-		virtual MessageProcessor(MessageProcessor const&);           
-		virtual MessageProcessor& operator=(MessageProcessor const&); 
-		*/
-		virtual void process(Message *msg) = 0;	   
+		/**********************************************************************
+
+			Function    : process
+			Description : creates a TPWork using received msg and given protocol
+			 				then submits it to tpm
+			Inputs      : msg - Message to be processed
+			Outputs     : none
+
+		***********************************************************************/
+		virtual void process(Message *msg) = 0;
+		
+		virtual void setThreadPoolManager(ThreadPoolManager *tpm_p) {
+			tpm = tpm_p;
+		};  
+		
+		virtual void setProtocol(Protocol *protocol_p) {
+			protocol = protocol_p;
+		};
+		
+	protected:
+		ThreadPoolManager *tpm;
+		Protocol *protocol;
 };
 
 #endif
