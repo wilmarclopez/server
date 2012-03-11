@@ -13,6 +13,8 @@
 #define MSG_PROC_H
 
 #include "Message.h"
+#include "ThreadPoolManager.h"
+#include "ThreadPoolWork.h"
 
 class MessageProcessor{
 	public:
@@ -31,7 +33,7 @@ class MessageProcessor{
 		};  
 				
 	protected:
-		ThreadPoolManager *tpm;
+		const ThreadPoolManager *tpm;
 		
 };
 

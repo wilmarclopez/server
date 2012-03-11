@@ -18,9 +18,9 @@ class Logger{
 	public:
 	   static Logger* getInstance();
 	   
-	   bool errorMessage(string msg);
-	   bool warningMessage(string msg);
-	   bool infoMessage(string msg);
+	   bool errorMessage(std::string msg);
+	   bool warningMessage(std::string msg);
+	   bool infoMessage(std::string msg);
 	   
 	   /*
 	   bool openLogFile(std::string logFile);
