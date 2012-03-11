@@ -14,11 +14,13 @@
 #define COMM_SERVICES_H
 
 #include "MessageProcessor.h"
+#include "Message.h"
 
 class CommunicationServices{
 		public:
 			static CommunicationServices* getInstance();  
 			void initServer(const MessageProcessor& mp, int protocolPort);	//init for server
+			void start();
 
 		private:
 			CommunicationServices();  // Private so that it can  not be called
@@ -27,11 +29,58 @@ class CommunicationServices{
 
 			static CommunicationServices* INSTANCE;
 			MessageProcessor *mp;
-	   
+			
+			
 			/**********************************************************************
 			Everything below is from: 
 				http://www.cse.psu.edu/~tjaeger/cse473-s08/cse473-s08-p2.html
+			
+			/**********************************************************************
 
+				Function    : getMessage
+				Description : receive data from the socket
+				Inputs      : sock - server socket
+							  hdr - the header structure
+							  block - the block to read
+				Outputs     : bytes read if successful, -1 if failure
+
+			***********************************************************************/
+
+			int getMessage( int sock, MessageHeader *hdr, char *block );
+			
+			/**********************************************************************
+
+				Function    : waitMessage
+				Description : wait for specific message type from the socket
+				Inputs      : sock - server socket
+							  hdr - the header structure
+							  block - the block to read
+							  my - the message to wait for
+				Outputs     : bytes read if successful, -1 if failure
+
+			***********************************************************************/
+
+			int waitMessage( int sock, MessageHeader *hdr, 
+							 char *block, MessageType mt );
+							 
+			
+			
+	   
+		public:
+			/**********************************************************************
+
+				Function    : sendMessage
+				Description : send data over the socket
+				Inputs      : sock - server socket
+							  hdr - the header structure
+							  block - the block to send
+				Outputs     : bytes read if successful, -1 if failure
+
+			***********************************************************************/
+
+			int sendMessage( int sock, DhProtoMessageHdr *hdr, char *block );
+			
+			/**********************************************************************
 
 				Function    : connectClient
 				Description : connnect a client to the server
@@ -39,7 +88,7 @@ class CommunicationServices{
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			int connectClient( char *addr );
+			static int connectClient( char *addr );
 
 			/**********************************************************************
 
@@ -49,7 +98,7 @@ class CommunicationServices{
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			int serverConnect( void );
+			static int serverConnect( void );
 
 			/**********************************************************************
 
@@ -59,7 +108,7 @@ class CommunicationServices{
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			int serverAccept( int sock );
+			static int serverAccept( int sock );
 
 			/**********************************************************************
 
@@ -72,7 +121,7 @@ class CommunicationServices{
 				Outputs     : bytes read if successful, -1 if failure
 
 			***********************************************************************/
-			int recvData( int sock, char *blk, int sz, int minsz );
+			static int recvData( int sock, char *blk, int sz, int minsz );
 
 			/**********************************************************************
 
@@ -84,7 +133,7 @@ class CommunicationServices{
 				Outputs     : 0 if successful, -1 if failure
 
 			***********************************************************************/
-			int sendData( int sock, char *blk, int len );
+			static int sendData( int sock, char *blk, int len );
 };
 
 #endif
