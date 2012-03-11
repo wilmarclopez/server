@@ -2,7 +2,7 @@
 
    File          : ThreadPoolManager.h
 
-   Description   : Implementation of thread pool pattern. A Singleton.
+   Description   : Implementation of thread pool pattern.
 
    Last Modified : 
    By            : Wilmarc Lopez
@@ -16,15 +16,12 @@
 
 class ThreadPoolManager {
 	public:
-	   static ThreadPoolManager* getInstance();  
-	   void submit(ThreadPoolWork *work);	//automatically deallocates work when finished
-	
-	private:
-	   ThreadPoolManager();  // Private so that it can  not be called
-	   ThreadPoolManager(ThreadPoolManager const&){};             // copy constructor is private
-	   ThreadPoolManager& operator=(ThreadPoolManager const&){};  // assignment operator is private
+		ThreadPoolManager();
+		ThreadPoolManager(int poolSize);
+		virtual ~ThreadPoolManager();  		
+
+		void submit(ThreadPoolWork *work);	//automatically deallocates work when finished	   
 	   
-	   static ThreadPoolManager* INSTANCE;
 };
 
 #endif
