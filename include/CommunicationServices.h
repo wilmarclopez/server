@@ -2,7 +2,8 @@
 
    File          : CommunicationServices.h
 
-   Description   : Network communication needs. A Singleton.
+   Description   : Network communication needs. A Singleton but can 
+    				actually just be static
 
    Last Modified : 
    By            : Wilmarc Lopez
