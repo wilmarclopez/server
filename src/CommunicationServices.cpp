@@ -32,11 +32,68 @@ CommunicationServices* CommunicationServices::getInstance()
 int CommunicationServices::initServer(MessageProcessor *mp_p, 
 	int tpProtocol, unsigned short int port)
 {
-	mp = mp_p;
+	mp = mp_p;	//mp should have its tpm set here
+	
 	mainSocket = serverConnect(port, tpProtocol);
 	
 	return 0; //temporary
 }
+
+
+
+int CommunicationServices::start()
+{
+	int errored = 0, newsock = 0;
+    fd_set readfds;
+    
+	/* check if initialized */
+	if ( !mp || !mainSocket )
+	{
+		logger->error("CommunicationServices not initialized.\n");
+		return -1;
+	}
+	
+	/* Repeat until the socket is closed */
+    while ( !errored )
+    {
+         FD_ZERO( &readfds );
+         FD_SET( mainSocket, &readfds );
+         if ( select(mainSocket+1, &readfds, NULL, NULL, NULL) < 1 )
+         {
+             /* Complain, explain, and exit */
+              char msg[128];
+              sprintf( msg, "failure selecting server connection [%.64s]\n",
+                       strerror(errno) );
+              logger->error( msg );
+              errored = 1;
+         }
+         else
+         {
+			/* Accept the connect, receive request, and return */
+			if ( (newsock = serverAccept(mainSocket)) != -1 )
+			{
+				Message *msg;	//mp should free this
+
+				if (receiveReq( newsock, &msg ) < 0
+					|| mp->process(msg) < 0) 
+					errored = 1;					
+				
+				fflush( stdout );
+			}
+			else {
+				/* Complain, explain, and exit */
+				char msg[128];
+				sprintf( msg, "failure accepting connection [%.64s]\n", 
+					  strerror(errno) );
+				logger->error( msg );
+				errored = 1;
+			}
+         }
+    }
+    
+    return 0;
+}
+
 
 
 
@@ -98,3 +155,39 @@ int CommunicationServices::serverConnect( unsigned short int port, int tpProtoco
      /* Return the file handle */
      return( sock );
 }
+
+int CommunicationServices::serverAccept( int sock )
+{
+	struct sockaddr_in inet;
+	unsigned int inet_len = sizeof(inet), nsock;
+
+     // Do the accept
+     if ( (nsock = accept(sock, (struct sockaddr *)&inet, &inet_len)) == 0 )
+     {
+        /* Complain, explain, and return */
+        char msg[128];
+        sprintf( msg, "failed server socket accept [%.64s]\n", 
+                       strerror(errno) );
+        logger->error( msg );
+        exit( -1 );
+     }
+
+     /* Return the new socket */
+     return( nsock );
+}
+
+/*
+int CommunicationServices::receiveReq( int sock, Message **msg )
+{
+	/* Read the message header *
+     recvData( sock, (char *)hdr, sizeof(DhProtoMessageHdr), 
+               sizeof(DhProtoMessageHdr) );
+     hdr->length = ntohs(hdr->length);
+     assert( hdr->length<MAX_BLOCK_SIZE );
+     hdr->msgtype = ntohs( hdr->msgtype );
+     if ( hdr->length > 0 )
+        return( recvData( sock, block, hdr->length, hdr->length ) );
+     return( 0 );
+}
+*/
+

@@ -36,9 +36,21 @@ class CommunicationServices{
 			int mainSocket;			
 			
 			/**********************************************************************
-			Everything below is from: 
+			Below are revised versions from: 
 				http://www.cse.psu.edu/~tjaeger/cse473-s08/cse473-s08-p2.html
 			***********************************************************************/
+			/**********************************************************************
+
+				Function    : receiveReq
+				Description : receive a request  over the wire
+				Inputs      : sock - the socket to receive the file over
+							  msg - reference to Message output
+				Outputs     : 0 if successful, -1 if failure
+
+			***********************************************************************/
+
+			int receiveReq( int sock, Message **msg );
+			 
 			/**********************************************************************
 
 				Function    : getMessage
