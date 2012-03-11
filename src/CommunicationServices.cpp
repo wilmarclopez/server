@@ -11,7 +11,6 @@
 #include <inttypes.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <arpa/inet.h>
 
 
 #include "CommunicationServices.h"
@@ -185,8 +184,7 @@ int CommunicationServices::serverAccept( int sock )
 
 
 int CommunicationServices::receiveReq( int sock, Message *msg )
-{
-		
+{		
 	//point to header
 	MessageHeader *hdr = &msg->hdr;
 
