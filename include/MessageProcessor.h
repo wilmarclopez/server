@@ -19,8 +19,7 @@ class MessageProcessor{
 		/**********************************************************************
 
 			Function    : process
-			Description : creates a TPWork using received msg and given protocol
-			 				then submits it to tpm
+			Description : creates a TPWork for the protocol using received msg and given protocol then submits it to tpm
 			Inputs      : msg - Message to be processed
 			Outputs     : none
 
@@ -30,14 +29,10 @@ class MessageProcessor{
 		virtual void setThreadPoolManager(ThreadPoolManager *tpm_p) {
 			tpm = tpm_p;
 		};  
-		
-		virtual void setProtocol(Protocol *protocol_p) {
-			protocol = protocol_p;
-		};
-		
+				
 	protected:
 		ThreadPoolManager *tpm;
-		Protocol *protocol;
+		
 };
 
 #endif
