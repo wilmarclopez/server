@@ -19,22 +19,23 @@
 class CommunicationServices{
 		public:
 			static CommunicationServices* getInstance();  
-			void initServer(const MessageProcessor& mp, int protocolPort);	//init for server
+			int initServer(MessageProcessor *mp_p, int protocolPort);	//init for server
 			void start();
 
 		private:
 			CommunicationServices();  // Private so that it can  not be called
-			CommunicationServices(CommunicationServices const&){};             // copy constructor is private
-			CommunicationServices& operator=(CommunicationServices const&){};  // assignment operator is private
+			CommunicationServices(CommunicationServices const&);             // copy constructor is private
+			CommunicationServices& operator=(CommunicationServices const&);  // assignment operator is private
 
 			static CommunicationServices* INSTANCE;
 			MessageProcessor *mp;
+			int mainSocket;
 			
 			
 			/**********************************************************************
 			Everything below is from: 
 				http://www.cse.psu.edu/~tjaeger/cse473-s08/cse473-s08-p2.html
-			
+			***********************************************************************/
 			/**********************************************************************
 
 				Function    : getMessage
@@ -78,7 +79,7 @@ class CommunicationServices{
 
 			***********************************************************************/
 
-			int sendMessage( int sock, DhProtoMessageHdr *hdr, char *block );
+			int sendMessage( int sock, MessageHeader *hdr, char *block );
 			
 			/**********************************************************************
 

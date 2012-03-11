@@ -12,7 +12,7 @@
 #ifndef TPWORK_H
 #define TPWORK_H
 
-class {
+class ThreadPoolWork{
 	public:
 		virtual void execute() = 0;
 };
