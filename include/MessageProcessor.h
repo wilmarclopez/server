@@ -2,7 +2,7 @@
 
    File          : MessageProcessor.h
 
-   Description   : Abstract class to be implemented by the protocol
+   Description   : Abstract class to be inherited and implemented by user
 
    Last Modified : 
    By            : Wilmarc Lopez
