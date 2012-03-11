@@ -2,7 +2,7 @@
 
    File          : CommunicationServices.h
 
-   Description   : Network communication needs
+   Description   : Network communication needs. A Singleton.
 
    Last Modified : 
    By            : Wilmarc Lopez

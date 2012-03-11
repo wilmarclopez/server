@@ -2,7 +2,7 @@
 
    File          : Logger.h
 
-   Description   : Definition of the class for logging
+   Description   : Definition of the class for logging. A Singleton.
 
    Last Modified : 
    By            : Wilmarc Lopez
