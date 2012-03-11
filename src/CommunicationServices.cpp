@@ -11,6 +11,8 @@
 #include <inttypes.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <arpa/inet.h>
+
 
 #include "CommunicationServices.h"
 #include "Logger.h"
@@ -72,11 +74,18 @@ int CommunicationServices::start()
 			/* Accept the connect, receive request, and return */
 			if ( (newsock = serverAccept(mainSocket)) != -1 )
 			{
-				Message *msg;	//mp should free this
+				Message *msg = new Message;	//mp should free this
 
-				if (receiveReq( newsock, &msg ) < 0
-					|| mp->process(msg) < 0) 
+				// fill msg with received data from the socket
+				if (receiveReq( newsock, msg ) < 0) {
 					errored = 1;					
+					deallocMsg(msg);	//deallocate when error
+				}
+				
+				if ( !errored ) {
+					//pass message to MessageProcessor
+					errored = mp->process(msg);
+				}			
 				
 				fflush( stdout );
 			}
@@ -93,8 +102,6 @@ int CommunicationServices::start()
     
     return 0;
 }
-
-
 
 
 int CommunicationServices::serverConnect( unsigned short int port, int tpProtocol )
@@ -176,18 +183,67 @@ int CommunicationServices::serverAccept( int sock )
      return( nsock );
 }
 
-/*
-int CommunicationServices::receiveReq( int sock, Message **msg )
+
+int CommunicationServices::receiveReq( int sock, Message *msg )
 {
-	/* Read the message header *
-     recvData( sock, (char *)hdr, sizeof(DhProtoMessageHdr), 
-               sizeof(DhProtoMessageHdr) );
-     hdr->length = ntohs(hdr->length);
-     assert( hdr->length<MAX_BLOCK_SIZE );
-     hdr->msgtype = ntohs( hdr->msgtype );
-     if ( hdr->length > 0 )
-        return( recvData( sock, block, hdr->length, hdr->length ) );
+		
+	//point to header
+	MessageHeader *hdr = &msg->hdr;
+
+	// read the message header 
+	recvData( sock, (char *)hdr, sizeof(MessageHeader), 
+		   sizeof(MessageHeader) );
+	hdr->length = ntohs(hdr->length);
+	assert( hdr->length < MAX_BODY_SIZE );
+	hdr->msgtype = ntohs( hdr->msgtype );
+
+	// set body size
+	msg->body = new char[hdr->length];
+
+	// read the message body
+	if ( hdr->length > 0 )
+		return(  recvData( sock, msg->body, hdr->length, hdr->length ) );
+
+	return( 0 );
+}
+
+/**********************************************************************
+
+    Function    : recvData
+    Description : receive data from the socket
+    Inputs      : sock - server socket
+                  blk - block to put data in
+                  sz - maxmimum size of buffer
+                  minsz - minimum bytes to read
+    Outputs     : bytes read if successful, -1 if failure
+
+***********************************************************************/
+
+int CommunicationServices::recvData( int sock, char *blk, int sz, int minsz )
+{
+     /* Keep reading until you have enough bytes */
+     int rb = 0, ret;
+     do 
+     {
+          /* Receive data from the socket */
+          if ( (ret=recv(sock, &blk[rb], sz-rb, 0)) == -1 )
+          {
+               /* Complain, explain, and return */
+               char msg[128];
+               sprintf( msg, "failed read error [%.64s]\n", 
+                        strerror(errno) );
+               logger->error( msg );
+               exit( -1 );
+          }
+
+          /* Increment read bytes */
+          rb += ret;
+     }
+     while ( rb < minsz );
+
+     /* Return the new socket */
+     logger->printBuffer( "recv data : ", blk, sz ); 
      return( 0 );
 }
-*/
+
 

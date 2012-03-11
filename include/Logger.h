@@ -25,7 +25,19 @@ class Logger{
 	   bool error(char *msg);
 	   bool warning(char *msg);
 	   bool info(char *msg);
-	   	   
+	   
+	   /**********************************************************************
+
+			Function    : printBuffer
+			Description : prints buffer to stdout
+			Inputs      : msg - header message
+						  buf - the buffer
+						  len - the length of the buffer
+			Outputs     : 0 if successful, -1 if failure
+
+		***********************************************************************/
+		void printBuffer( char *msg, char *buf, int len );
+	   
 	   /*
 	   bool openLogFile(std::string logFile);
 	   void writeToLogFile();

@@ -49,36 +49,7 @@ class CommunicationServices{
 
 			***********************************************************************/
 
-			int receiveReq( int sock, Message **msg );
-			 
-			/**********************************************************************
-
-				Function    : getMessage
-				Description : receive data from the socket
-				Inputs      : sock - server socket
-							  hdr - the header structure
-							  block - the block to read
-				Outputs     : bytes read if successful, -1 if failure
-
-			***********************************************************************/
-
-			int getMessage( int sock, MessageHeader *hdr, char *block );
-			
-			/**********************************************************************
-
-				Function    : waitMessage
-				Description : wait for specific message type from the socket
-				Inputs      : sock - server socket
-							  hdr - the header structure
-							  block - the block to read
-							  my - the message to wait for
-				Outputs     : bytes read if successful, -1 if failure
-
-			***********************************************************************/
-
-			int waitMessage( int sock, MessageHeader *hdr, 
-							 char *block, MessageType mt );
-							 
+			int receiveReq( int sock, Message *msg );			 
 			
 			
 	   
