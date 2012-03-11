@@ -12,6 +12,12 @@
 #ifndef TPOOL_H
 #define TPOOL_H
 
+#include "ThreadPoolManager.h"
+#include "ThreadPoolWork.h"
+#include "CommunicationServices.h"
+#include "Logger.h"
+#include "MessageProcessor.h"
+
 class Server {
 	public:
 		Server(MessageProcessor *mp, ThreadPoolWork *tpwork, int poolSize);
