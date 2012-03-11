@@ -20,7 +20,8 @@
 
 class Server {
 	public:
-		Server(MessageProcessor *mp, ThreadPoolWork *tpwork, int poolSize);
+		Server(int protocolPort, MessageProcessor *mp, 
+			ThreadPoolWork *tpwork, int poolSize);
 		void start();
 		
 	protected:
