@@ -17,6 +17,9 @@
 
 class MessageProcessor{
 	public:
+	
+		MessageProcessor() : tp(0) {}
+	
 		/**********************************************************************
 
 			Function    : process

@@ -5,10 +5,10 @@
 
 Server::Server(unsigned short int protocolPort, MessageProcessor *mp, int poolSize) : tp(poolSize)
 {
-	comm = CommunicationServices.getInstance();
+	comm = CommunicationServices::getInstance();
 	mp->setThreadPool(&tp);
 	comm->initServer(mp, SOCK_STREAM ,protocolPort);
-	logger = Logger.getInstance();
+	logger = Logger::getInstance();
 }
 
 void Server::start()
