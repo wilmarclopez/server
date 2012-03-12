@@ -8,6 +8,9 @@ BOOST_THREAD_DIR = $(BOOST_ROOT)/stage/lib
 CFLAGS = -g -Wall -I$(INC_DIR) -I$(BOOST_ROOT)
 LDFLAGS = -lpthread $(BOOST_ROOT) -lboost_thread -L$(BOOST_THREAD_DIR)
 
+MessageProcessorImpl.o: $(SRC_DIR)/MessageProcessorImpl.cpp
+	$(CXX) -c $(SRC_DIR)/MessageProcessorImpl.cpp $(CFLAGS)
+	
 WorkerThreadImpl.o: $(SRC_DIR)/WorkerThreadImpl.cpp
 	$(CXX) -c $(SRC_DIR)/WorkerThreadImpl.cpp $(CFLAGS)
 
@@ -26,5 +29,5 @@ Server.o: $(SRC_DIR)/Server.cpp Logger.o ThreadPool.o CommunicationServices.o
 clean:
 	rm *.o
 	
-all: CommunicationServices.o ThreadPool.o WorkerThreadImpl.o
+all: CommunicationServices.o ThreadPool.o WorkerThreadImpl.o MessageProcessorImpl.o
 	
