@@ -25,9 +25,9 @@ class CommunicationServices{
 			int start();	//returns -1 when not started properly
 
 		private:
-			CommunicationServices();  // Private so that it can  not be called
-			CommunicationServices(CommunicationServices const&);             // copy constructor is private
-			CommunicationServices& operator=(CommunicationServices const&);  // assignment operator is private
+			CommunicationServices(){}  // Private so that it can  not be called
+			CommunicationServices(CommunicationServices const&){}             // copy constructor is private
+			CommunicationServices& operator=(CommunicationServices const&){}  // assignment operator is private
 
 			static CommunicationServices* INSTANCE;
 			static Logger *logger;

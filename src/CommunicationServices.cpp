@@ -16,11 +16,8 @@
 #include "CommunicationServices.h"
 #include "Logger.h"
 
-CommunicationServices::CommunicationServices()
-{
-	logger = Logger::getInstance();
-}
-
+CommunicationServices* CommunicationServices::INSTANCE = NULL;
+Logger* CommunicationServices::logger = Logger::getInstance();
 
 CommunicationServices* CommunicationServices::getInstance()
 {

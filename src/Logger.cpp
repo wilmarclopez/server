@@ -5,6 +5,9 @@
 
 using namespace std;
 
+Logger* Logger::INSTANCE = NULL;
+
+
 Logger* Logger::getInstance()
 {
 	if (!INSTANCE)
@@ -50,4 +53,25 @@ bool Logger::info(char *msg)
 	/* Print message and return */
     fprintf( stdout, "Info: %s\n", msg );
 	return true;
+}
+
+
+void Logger::printBuffer( char *msg, char *buf, int len )
+{
+	/* Print message and return */
+     int i;
+     if ( msg != NULL ) printf( "%s : ", msg );
+     if ( buf != NULL )
+     {
+          for ( i=0; i<len; i++ ) 
+          {
+               printf( "%2X ", (unsigned char)buf[i] );
+          }
+     }
+     else
+     {
+          printf( "(null)" );
+     }
+     printf( "\n" );
+     return;
 }
