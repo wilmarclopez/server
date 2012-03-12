@@ -195,8 +195,11 @@ int CommunicationServices::receiveReq( int sock, Message *msg )
 	assert( hdr->length < MAX_BODY_SIZE );
 	hdr->msgtype = ntohs( hdr->msgtype );
 
+	// set the socket
+	msg->sock = sock;
+
 	// set body size
-	msg->body = new char[hdr->length];
+	msg->body = new char[hdr->length];	
 
 	// read the message body
 	if ( hdr->length > 0 )
