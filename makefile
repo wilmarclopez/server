@@ -8,8 +8,10 @@ BOOST_THREAD_DIR = $(BOOST_ROOT)/stage/lib
 CFLAGS = -g -Wall -I$(INC_DIR) -I$(BOOST_ROOT)
 LDFLAGS = -lpthread $(BOOST_ROOT) -lboost_thread -L$(BOOST_THREAD_DIR)
 
+WorkerThreadImpl.o: $(SRC_DIR)/WorkerThreadImpl.cpp
+	$(CXX) -c $(SRC_DIR)/WorkerThreadImpl.cpp $(CFLAGS)
 
-ThreadPool.o: $(SRC_DIR)/threadpool.cpp #ThreadPoolWork.o
+ThreadPool.o: $(SRC_DIR)/threadpool.cpp 
 	$(CXX) -c $(SRC_DIR)/threadpool.cpp $(CFLAGS)
 
 Logger.o: $(SRC_DIR)/Logger.cpp
@@ -24,5 +26,5 @@ Server.o: $(SRC_DIR)/Server.cpp Logger.o ThreadPool.o CommunicationServices.o
 clean:
 	rm *.o
 	
-all: CommunicationServices.o ThreadPool.o
+all: CommunicationServices.o ThreadPool.o WorkerThreadImpl.o
 	

@@ -35,6 +35,10 @@ typedef struct Message_ {
 	int sock;	//socket descriptor of origin
 } Message;
 
-extern void deallocMsg(Message *msg);
+void deallocMsg(Message *msg)
+{
+	delete[] msg->body;
+	delete msg;
+}
 
 #endif
