@@ -12,21 +12,19 @@
 #ifndef TPOOL_H
 #define TPOOL_H
 
-#include "ThreadPoolManager.h"
-#include "ThreadPoolWork.h"
+#include "threadpool.h"
 #include "CommunicationServices.h"
 #include "Logger.h"
 #include "MessageProcessor.h"
 
 class Server {
 	public:
-		Server(int protocolPort, MessageProcessor *mp, 
-			ThreadPoolWork *tpwork, int poolSize);
+		Server(unsigned short int protocolPort, MessageProcessor *mp, int poolSize);
 		void start();
 		void cleanup();
 		
 	protected:
-		ThreadPoolManager *tpm;
+		ThreadPool tp;
 		CommunicationServices *comm; //singleton
 		Logger *logger;	//singleton
 	
