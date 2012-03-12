@@ -273,3 +273,31 @@ int CommunicationServices::sendMessage( int sock, MessageHeader *hdr, char *bloc
                   sendData(sock, block, real_len) );
 }
 
+/**********************************************************************
+
+    Function    : sendData
+    Description : send  data to the socket
+    Inputs      : sock - server socket
+                  blk - block to send
+                  len - length of data to send
+    Outputs     : 0 if successful, -1 if failure
+
+***********************************************************************/
+
+int CommunicationServices::sendData( int sock, char *blk, int len )
+{
+
+     /* Send data using the socket */
+     if ( send(sock, blk, len, 0) != len )
+     {
+        /* Complain, explain, and return */
+        logger->error( "failed socket send [short send]" );
+		printf( " len = %d\n", len );
+        exit( -1 );
+     }
+
+     logger->printBuffer( "sent data : ", blk, len ); 
+
+     return( 0 );
+}
+
