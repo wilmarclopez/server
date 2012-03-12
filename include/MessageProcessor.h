@@ -30,7 +30,8 @@ class MessageProcessor{
 		
 		virtual void setThreadPoolManager(ThreadPoolManager *tpm_p) {
 			tpm = tpm_p;
-		};  
+		}		
+		
 				
 	protected:
 		const ThreadPoolManager *tpm;

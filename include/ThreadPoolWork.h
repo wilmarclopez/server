@@ -14,7 +14,7 @@
 
 class ThreadPoolWork{
 	public:
-		virtual void execute() = 0;
+		virtual void operator()() = 0;
 };
 
 #endif
