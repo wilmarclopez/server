@@ -247,4 +247,29 @@ int CommunicationServices::recvData( int sock, char *blk, int sz, int minsz )
      return( 0 );
 }
 
+/**********************************************************************
+
+    Function    : sendMessage
+    Description : send data over the socket
+    Inputs      : sock - server socket
+                  hdr - the header structure
+                  block - the block to send
+    Outputs     : bytes read if successful, -1 if failure
+
+***********************************************************************/
+
+int CommunicationServices::sendMessage( int sock, MessageHeader *hdr, char *block )
+{
+     int real_len = 0;
+
+     /* Convert to the network format */
+     real_len = hdr->length;
+     hdr->msgtype = htons( hdr->msgtype );
+     hdr->length = htons( hdr->length );
+     if ( block == NULL )
+          return( sendData( sock, (char *)hdr, sizeof(MessageHeader) ) );
+     else 
+          return( sendData(sock, (char *)hdr, sizeof(MessageHeader)) ||
+                  sendData(sock, block, real_len) );
+}
 
