@@ -86,7 +86,7 @@ class CommunicationServices{
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			static int serverConnect( unsigned short int port, int tpProtocol );
+			static int serverConnect( short port, int tpProtocol );
 
 			/**********************************************************************
 

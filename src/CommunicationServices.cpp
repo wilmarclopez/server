@@ -100,7 +100,7 @@ int CommunicationServices::start()
 }
 
 
-int CommunicationServices::serverConnect( unsigned short int port, int tpProtocol )
+int CommunicationServices::serverConnect( short port, int tpProtocol )
 {
 	 /* Local variables */
      int sock;
@@ -109,7 +109,7 @@ int CommunicationServices::serverConnect( unsigned short int port, int tpProtoco
      // Zero/Set the address
      memset( &inet, 0x0, sizeof(inet) );
      inet.sin_family = AF_INET;
-     inet.sin_port = port;
+     inet.sin_port = htons( port );
      inet.sin_addr.s_addr = INADDR_ANY;
 
      /* Connect to the server */
