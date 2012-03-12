@@ -26,8 +26,9 @@ class MessageProcessor{
 
 		***********************************************************************/
 		virtual int process(Message *msg) = 0;
-		
+
 		virtual void setThreadPool(ThreadPool *tp_p) {
+
 			tp = tp_p;
 		}		
 		
