@@ -26,6 +26,11 @@ typedef struct MessageHeader_ {
 	unsigned short length;		//length of body in size. this should always be present
 	
 	//add other header things here
+	
+	//constructors
+	MessageHeader_(unsigned short msgtype_p, unsigned short length_p)
+		: msgtype(msgtype_p), length(length_p) {}
+	MessageHeader_() : msgtype(-1), length(0) {}
 } MessageHeader;
 
 /* This is the message */
@@ -33,6 +38,11 @@ typedef struct Message_ {
 	MessageHeader hdr;
 	char *body;
 	int sock;	//socket descriptor of origin
+	
+	//constructors
+	Message_(MessageHeader hdr_p, char *body_p, int sock_p)
+		:hdr(hdr_p), body(body_p), sock(sock_p) {}
+	Message_() : body(0), sock(-1) {}
 } Message;
 
 extern void deallocMsg(Message *msg);
