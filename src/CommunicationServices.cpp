@@ -9,6 +9,7 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <inttypes.h>
+#include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
 
@@ -302,4 +303,51 @@ int CommunicationServices::sendData( int sock, char *blk, int len )
 
      return( 0 );
 }
+/**********************************************************************
 
+    Function    : connectClient
+    Description : connnect a client to the server
+    Inputs      : address - the address ("a.b.c.d")
+					port - port of server
+    Outputs     : file handle if successful, -1 if failure
+
+***********************************************************************/
+
+int CommunicationServices::connectClient( char *address, short port )
+{
+     /* Local variables */
+     int sock;
+     struct sockaddr_in inet;
+
+     // Zero/Set the address
+     memset( &inet, 0x0, sizeof(inet) );
+     inet.sin_family = AF_INET;
+     inet.sin_port = htons( port );
+     inet.sin_addr.s_addr = inet_addr( (char *)address );
+
+     /* Connect to the server */
+     if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
+     {
+         /* Complain, explain, and exit */
+         logger->error( "failed read on data file.\n" );
+         exit( -1 );
+     }
+
+     // Call the connect
+     if ( connect(sock, (struct sockaddr *)&inet, sizeof(inet)) != 0 )
+     {
+        /* Complain, explain, and return */
+        char msg[128];
+        sprintf( msg, "failed client socket connection [%.64s]\n", 
+                       strerror(errno) );
+        logger->error( msg );
+        exit( -1 );
+     }
+
+     /* Print a log message */
+     printf( "Client connected to address [%s/%d], successful ...", 
+             address, port );
+
+     /* Return the file handle */
+     return( sock );
+}

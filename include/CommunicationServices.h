@@ -72,10 +72,11 @@ class CommunicationServices{
 				Function    : connectClient
 				Description : connnect a client to the server
 				Inputs      : addr - the address ("a.b.c.d/port")
+				* 				port - port of server to connect to
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			static int connectClient( char *addr );
+			static int connectClient( char *addr, short port );
 
 			/**********************************************************************
 
