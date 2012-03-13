@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <sys/select.h>
 #include <sys/types.h>
+#include <netdb.h>
 #include <netinet/in.h>
 #include <inttypes.h>
 #include <arpa/inet.h>
@@ -313,41 +314,63 @@ int CommunicationServices::sendData( int sock, char *blk, int len )
 
 ***********************************************************************/
 
-int CommunicationServices::connectClient( char *address, short port )
+int CommunicationServices::connectClient( char* address, char* port )
+{	
+	struct addrinfo hints, *servinfo, *p;	
+	int sockfd, rv;	
+	char s[INET6_ADDRSTRLEN];
+	
+	memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = SOCK_STREAM;
+
+    if ((rv = getaddrinfo(address, port, &hints, &servinfo)) != 0) {
+		char msg[128];
+		sprintf(msg, "getaddrinfo: %s\n", gai_strerror(rv));
+        logger->error(msg);
+        return 1;
+    }
+
+    // loop through all the results and connect to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            logger->error("client: socket");
+            continue;
+        }
+
+        if (connect(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            logger->error("client: connect");
+            continue;
+        }
+
+        break;
+    }
+
+    if (p == NULL) {
+        logger->error("client: failed to connect\n");
+        return 2;
+    }
+
+    inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
+            s, sizeof s);
+            
+	char msg[128];
+	sprintf(msg, "Client: Connected to %s:%s\n", s, port);
+    logger->info(msg);
+
+    freeaddrinfo(servinfo); // all done with this structure
+	
+	return( sockfd );
+}
+
+// get sockaddr, IPv4 or IPv6:
+void *CommunicationServices::get_in_addr(struct sockaddr *sa)
 {
-     /* Local variables */
-     int sock;
-     struct sockaddr_in inet;
+    if (sa->sa_family == AF_INET) {
+        return &(((struct sockaddr_in*)sa)->sin_addr);
+    }
 
-     // Zero/Set the address
-     memset( &inet, 0x0, sizeof(inet) );
-     inet.sin_family = AF_INET;
-     inet.sin_port = htons( port );
-     inet.sin_addr.s_addr = inet_addr( (char *)address );
-
-     /* Connect to the server */
-     if ( (sock = socket(AF_INET, SOCK_STREAM, 0)) == -1 )
-     {
-         /* Complain, explain, and exit */
-         logger->error( "failed read on data file.\n" );
-         exit( -1 );
-     }
-
-     // Call the connect
-     if ( connect(sock, (struct sockaddr *)&inet, sizeof(inet)) != 0 )
-     {
-        /* Complain, explain, and return */
-        char msg[128];
-        sprintf( msg, "failed client socket connection [%.64s]\n", 
-                       strerror(errno) );
-        logger->error( msg );
-        exit( -1 );
-     }
-
-     /* Print a log message */
-     printf( "Client connected to address [%s/%d], successful ...", 
-             address, port );
-
-     /* Return the file handle */
-     return( sock );
+    return &(((struct sockaddr_in6*)sa)->sin6_addr);
 }

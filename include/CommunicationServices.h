@@ -54,6 +54,9 @@ class CommunicationServices{
 			
 	   
 		public:
+			// get sockaddr, IPv4 or IPv6:
+			static void *get_in_addr(struct sockaddr *sa);
+			
 			/**********************************************************************
 
 				Function    : sendMessage
@@ -76,7 +79,7 @@ class CommunicationServices{
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			static int connectClient( char *addr, short port );
+			static int connectClient( char* addr, char* port );
 
 			/**********************************************************************
 
