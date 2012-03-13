@@ -6,7 +6,7 @@ BOOST_ROOT = ../boost
 BOOST_THREAD_DIR = $(BOOST_ROOT)/stage/lib
 
 CFLAGS = -g -Wall -I$(INC_DIR) -I$(BOOST_ROOT)
-LDFLAGS = -lpthread -lboost_thread -L$(BOOST_THREAD_DIR)
+LDFLAGS = -lpthread #-lboost_thread -L$(BOOST_THREAD_DIR)
 
 TARGETS =  Message.o Server.o CommunicationServices.o Logger.o \
 				threadpool.o WorkerThreadImpl.o MessageProcessorImpl.o
@@ -38,10 +38,10 @@ Message.o: $(SRC_DIR)/Message.cpp
 Main.o: $(SRC_DIR)/Main.cpp
 	$(CXX) -c $^ $(CFLAGS)
 		
-server: Main.o $(TARGETS)
+server: Main.o $(LIBSERVER)
 	$(CXX) $^ $(LDFLAGS) -o $(SERVER)
 	
-lib: $(TARGETS) 
+$(LIBSERVER): $(TARGETS) 
 	ar -rv $(LIBSERVER) $(TARGETS)
 	
 clean:
@@ -50,4 +50,4 @@ clean:
 clean-obj:
 	rm *.o
 	
-all: server lib clean-obj
+all: server $(LIBSERVER) clean-obj
