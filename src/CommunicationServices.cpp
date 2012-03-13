@@ -191,6 +191,11 @@ int CommunicationServices::receiveReq( int sock, Message *msg )
 	hdr->length = ntohs(hdr->length);
 	assert( hdr->length < MAX_BODY_SIZE );
 	hdr->msgtype = ntohs( hdr->msgtype );
+	
+	// Display header	
+	cout<< "Received message on socket" << sock << " with msgtype = "
+		<< hdr->msgtype << "and length =" << hdr->length<<"\n";
+				   
 
 	// set the socket
 	msg->sock = sock;

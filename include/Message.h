@@ -21,9 +21,9 @@ typedef enum {
 } MessageType;
 
 /* This is the message header */
-typedef struct MessageHeader_ {
-	unsigned short length;		//length of body in size. this should always be present
+typedef struct MessageHeader_ {	
 	unsigned short msgtype;	//message type. this should always be present
+	unsigned short length;		//length of body in size. this should always be present
 	
 	//add other header things here
 } MessageHeader;

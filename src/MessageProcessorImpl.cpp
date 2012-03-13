@@ -8,6 +8,7 @@ int MessageProcessorImpl::process(Message* msg)
 		return -1;
 	}
 	
+	logger->info("Creating thread work.");
 	WorkerThreadImpl* work = new WorkerThreadImpl(workerCount++, msg);
 	
 	tp->assignWork(work);

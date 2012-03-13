@@ -73,7 +73,7 @@ void ThreadPool::destroyPool(int maxPollSecs = 2)
 {
 	while( incompleteWork>0 )
 	{
-	        //cout << "Work is still incomplete=" << incompleteWork << endl;
+	        cout << "Work is still incomplete=" << incompleteWork << endl;
 		sleep(maxPollSecs);
 	}
 	cout << "All Done!! Wow! That was a lot of work!" << endl;
@@ -89,7 +89,7 @@ bool ThreadPool::assignWork(WorkerThread *workerThread)
 {
         pthread_mutex_lock(&mutexWorkCompletion);
 		incompleteWork++;
-		//cout << "assignWork...incomapleteWork=" << incompleteWork << endl;
+		cout << "assignWork...incomapleteWork=" << incompleteWork << endl;
 	pthread_mutex_unlock(&mutexWorkCompletion);
     
 	sem_wait(&availableThreads);
@@ -97,7 +97,7 @@ bool ThreadPool::assignWork(WorkerThread *workerThread)
 	pthread_mutex_lock(&mutexSync);
 		//workerVec[topIndex] = workerThread;
 		workerQueue[topIndex] = workerThread;
-                //cout << "Assigning Worker[" << workerThread->id << "] Address:[" << workerThread << "] to Queue index [" << topIndex << "]" << endl;
+                cout << "Assigning Worker[" << workerThread->id << "] Address:[" << workerThread << "] to Queue index [" << topIndex << "]" << endl;
 		if(queueSize !=1 )
 			topIndex = (topIndex+1) % (queueSize-1);
 		sem_post(&availableWork);
@@ -129,13 +129,13 @@ void *ThreadPool::threadExecute(void *param)
 		if(worker)
                 {
 			worker->executeThis();
-                        //cout << "worker[" << worker->id << "]\tdelete address: [" << worker << "]" << endl;
+                        cout << "worker[" << worker->id << "]\tdelete address: [" << worker << "]" << endl;
                         delete worker;
                         worker = NULL;
                 }
 
 		pthread_mutex_lock( &(((ThreadPool *)param)->mutexWorkCompletion) );
-                //cout << "Thread " << pthread_self() << " has completed a Job !" << endl;
+                cout << "Thread " << pthread_self() << " has completed a Job !" << endl;
 	 	((ThreadPool *)param)->incompleteWork--;
 		pthread_mutex_unlock( &(((ThreadPool *)param)->mutexWorkCompletion) );
 	}
