@@ -17,11 +17,13 @@
 #include "Message.h"
 #include "Logger.h"
 
+#define BACKLOG 15	//listening buffer size
+
 class CommunicationServices{
 		public:
 			static CommunicationServices* getInstance();  
 			int initServer(MessageProcessor *mp_p, int tpProtocol, 
-					unsigned short int port);	//init for server
+					char* port);	//init for server
 			int start();	//returns -1 when not started properly
 
 		private:
@@ -53,9 +55,7 @@ class CommunicationServices{
 			
 			
 	   
-		public:
-			// get sockaddr, IPv4 or IPv6:
-			static void *get_in_addr(struct sockaddr *sa);
+		public:		
 			
 			/**********************************************************************
 
@@ -90,7 +90,7 @@ class CommunicationServices{
 				Outputs     : file handle if successful, -1 if failure
 
 			***********************************************************************/
-			static int serverConnect( short port, int tpProtocol );
+			static int serverConnect( char* port, int tpProtocol );
 
 			/**********************************************************************
 
@@ -126,6 +126,10 @@ class CommunicationServices{
 
 			***********************************************************************/
 			static int sendData( int sock, char *blk, int len );
+			
+		protected:
+			// get sockaddr, IPv4 or IPv6:
+			static void *get_in_addr(struct sockaddr *sa);			
 };
 
 #endif

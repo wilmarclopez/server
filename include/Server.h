@@ -19,7 +19,7 @@
 
 class Server {
 	public:
-		Server(unsigned short int protocolPort, MessageProcessor *mp, int poolSize);
+		Server(char* protocolPort, MessageProcessor *mp, int poolSize);
 		void start();
 		void cleanup();
 		

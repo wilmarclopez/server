@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 
-Server::Server(unsigned short int protocolPort, MessageProcessor *mp, int poolSize) : tp(poolSize)
+Server::Server(char* protocolPort, MessageProcessor *mp, int poolSize) : tp(poolSize)
 {
 	comm = CommunicationServices::getInstance();
 	comm->initServer(mp, SOCK_STREAM ,protocolPort);

@@ -1,7 +1,7 @@
 #include "Server.h"
 #include "MessageProcessorImpl.h"
 
-#define PORT 9157 //1405
+#define PORT "9157" //1405
 #define POOL 50
 
 int main()

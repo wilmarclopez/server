@@ -13,6 +13,7 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <signal.h>
 
 
 #include "CommunicationServices.h"
@@ -30,7 +31,7 @@ CommunicationServices* CommunicationServices::getInstance()
 }
 
 int CommunicationServices::initServer(MessageProcessor *mp_p, 
-	int tpProtocol, unsigned short int port)
+	int tpProtocol, char* port)
 {
 	mp = mp_p;	//mp should have its tpm set here
 	
@@ -102,63 +103,71 @@ int CommunicationServices::start()
 }
 
 
-int CommunicationServices::serverConnect( short port, int tpProtocol )
+int CommunicationServices::serverConnect( char* port, int tpProtocol )
 {
-	 /* Local variables */
-     int sock;
-     struct sockaddr_in inet;
+	int sockfd;  // listen on sock_fd, new connection on new_fd
+    struct addrinfo hints, *servinfo, *p;
+    struct sigaction sa;
+    int yes=1;    
+    int rv;
 
-     // Zero/Set the address
-     memset( &inet, 0x0, sizeof(inet) );
-     inet.sin_family = AF_INET;
-     inet.sin_port = htons( port );
-     inet.sin_addr.s_addr = INADDR_ANY;
+    memset(&hints, 0, sizeof hints);
+    hints.ai_family = AF_UNSPEC;
+    hints.ai_socktype = tpProtocol;
+    hints.ai_flags = AI_PASSIVE; // use my IP
 
-     /* Connect to the server */
-     if ( (sock = socket( AF_INET, tpProtocol, 0)) == -1 )
-     {
-        /* Complain, explain, and return */
+    if ((rv = getaddrinfo(NULL, port, &hints, &servinfo)) != 0) {
         char msg[128];
-        sprintf( msg, "failed server socket create [%.64s]\n", 
-                       strerror(errno) );
-        logger->error( msg );
-        exit( -1 );
-     }
+		sprintf(msg, "getaddrinfo: %s\n", gai_strerror(rv));
+        logger->error(msg);
+        
+        exit(1);
+    }
 
-     /* Setup the socket option to reuse */
-     int on = 1;
-     setsockopt( sock, SOL_SOCKET, SO_REUSEADDR, &on, sizeof(on));
+    // loop through all the results and bind to the first we can
+    for(p = servinfo; p != NULL; p = p->ai_next) {
+        if ((sockfd = socket(p->ai_family, p->ai_socktype,
+                p->ai_protocol)) == -1) {
+            logger->error("server: socket");
+            continue;
+        }
 
-     // Call the connect
-     if ( bind(sock, (struct sockaddr *)&inet, sizeof(inet)) != 0 )
-     {
-        /* Complain, explain, and return */
-        char msg[128];
-        sprintf( msg, "failed server socket bind [%.64s]\n", 
-                       strerror(errno) );
-        logger->error( msg );
-        exit( -1 );
-     }
+        if (setsockopt(sockfd, SOL_SOCKET, SO_REUSEADDR, &yes,
+                sizeof(int)) == -1) {
+            logger->error("setsockopt");
+            exit(1);
+        }
 
-     // Do the listen
-     if ( listen(sock, 5) != 0 )
-     {
-        /* Complain, explain, and return */
-        char msg[128];
-        sprintf( msg, "failed server socket listen [%.64s]\n", 
-                       strerror(errno) );
-        logger->error( msg );
-        exit( -1 );
-     }
+        if (bind(sockfd, p->ai_addr, p->ai_addrlen) == -1) {
+            close(sockfd);
+            logger->error("server: bind");
+            continue;
+        }
 
-     /* Print a log message */
-     char msg[128];
-     sprintf( msg, "Server binding to port [%d], successful ...\n", 
-             port  );
-     logger->info(msg);     
+        break;
+    }
 
-     /* Return the file handle */
-     return( sock );
+    if (p == NULL)  {
+        fprintf(stderr, "server: failed to bind\n");
+        return 2;
+    }
+
+    freeaddrinfo(servinfo); // all done with this structure
+
+    if (listen(sockfd, BACKLOG) == -1) {
+        logger->error("listen");
+        exit(1);
+    }   
+
+	char s[INET6_ADDRSTRLEN];
+	inet_ntop(p->ai_family, get_in_addr((struct sockaddr *)p->ai_addr),
+            s, sizeof s);
+            
+	char msg[128];
+	sprintf(msg, "Server listening at %s:%s ...", s,port);
+	logger->info(msg);
+        
+	return sockfd;	
 }
 
 int CommunicationServices::serverAccept( int sock )
